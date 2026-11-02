@@ -181,6 +181,12 @@ class TestJobHelpers(unittest.TestCase):
         status["cgi:"][13] = "yes"
         self.assertEqual(job.gate(status, interp, per)[0], "FAILED")
 
+    def test_tarball_urls(self):
+        # Branch first, then the tag that replaces an end-of-life branch (run-1 failure).
+        self.assertEqual(job.tarball_urls("3.9"), [
+            "https://codeload.github.com/python/cpython/tar.gz/refs/heads/3.9",
+            "https://codeload.github.com/python/cpython/tar.gz/refs/tags/3.9"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -21,9 +21,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import ledger  # noqa: E402
 
-UA = {"User-Agent": "mv2-stdlib-deprecation-ledger/0.1 (Munim, Inc.; mv2@munimtech.com)"}
+UA = {"User-Agent": "mv2-stdlib-deprecation-ledger/0.2 (Munim, Inc.; mv2@munimtech.com)"}
 BRANCHES = ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15", "main"]
-TARBALL = "https://codeload.github.com/python/cpython/tar.gz/refs/heads/%s"
+# Run 1 (2026-11-01) failed here: CPython replaces an end-of-life branch (3.9, 3.10) with a
+# tag of the same name, so refs/heads/3.9 is a 404. Try the branch first, then the tag.
+TARBALLS = ["https://codeload.github.com/python/cpython/tar.gz/refs/heads/%s",
+            "https://codeload.github.com/python/cpython/tar.gz/refs/tags/%s"]
 PYLINT = ["https://raw.githubusercontent.com/pylint-dev/pylint/main/pylint/checkers/stdlib.py",
           "https://raw.githubusercontent.com/pylint-dev/pylint/main/pylint/checkers/imports.py"]
 MINORS = list(range(8, 17))   # 3.16 is optional (pre-release, if uv has one)
@@ -52,6 +55,23 @@ def fetch(url, dest=None, tries=3):
         except Exception as e:  # network hiccup: retry
             err = e
         time.sleep(5 * (k + 1))
+    raise err
+
+
+def tarball_urls(ref):
+    return [t % ref for t in TARBALLS]
+
+
+def fetch_ref(ref, dest):
+    """Download a branch tarball, falling back to a tag of the same name. Returns the URL."""
+    err = None
+    for url in tarball_urls(ref):
+        try:
+            fetch(url, dest, tries=2)
+            return url
+        except Exception as e:
+            err = e
+            print("fetch failed: %s (%s)" % (url, e), flush=True)
     raise err
 
 
@@ -178,18 +198,20 @@ def main():
     rows, sources, rows_per_branch = [], {}, {}
     for b in BRANCHES:
         path = os.path.join(a.data_dir, "cpython-%s-%s.tar.gz" % (b, fetched_at[:10]))
+        url = "cached"
         if not os.path.exists(path):
-            fetch(TARBALL % b, path)
+            url = fetch_ref(b, path)
         docs, commit = read_library(path)
         br = []
         for name in sorted(docs):
             br.extend(ledger.scan(docs[name], name, b))
         rows.extend(br)
         rows_per_branch[b] = sum(1 for r in br if r["directive"] == "deprecated-removed")
-        sources[b] = {"commit": commit, "tarball_sha256": sha256_file(path),
+        sources[b] = {"commit": commit, "tarball_sha256": sha256_file(path), "url": url,
                       "rst_files": len(docs), "rows": len(br),
                       "deprecated_removed_rows": rows_per_branch[b]}
-        print("branch %s: commit %s, %d files, %d rows" % (b, commit[:12], len(docs), len(br)))
+        print("branch %s: %s, commit %s, %d files, %d rows"
+              % (b, url, commit[:12], len(docs), len(br)), flush=True)
 
     targets = {}
     for r in rows:
@@ -207,7 +229,7 @@ def main():
             py, err = interpreter(minor)
             if not py:
                 interpreters["3.%d" % minor] = {"installed": False, "error": err}
-                print("3.%d not installed: %s" % (minor, err.strip()[-200:]))
+                print("3.%d not installed: %s" % (minor, err.strip()[-200:]), flush=True)
                 continue
             ver, found = None, 0
             for mod in sorted(targets):
@@ -219,7 +241,7 @@ def main():
                     found += s == "yes"
             interpreters["3.%d" % minor] = {"installed": True, "version": ver,
                                             "names_found": found}
-            print("3.%d probed: %s, %d names found" % (minor, ver, found))
+            print("3.%d probed: %s, %d names found" % (minor, ver, found), flush=True)
 
     verdict, details = gate(status, interpreters, rows_per_branch)
     claims = ledger.build_claims(rows)

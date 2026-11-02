@@ -17,6 +17,14 @@ note reads "removed in version Z". This project:
 
 Status: pre-registered (see PREREG.md). Results and grading will follow in this repo.
 
+## Deviations from the pre-registration
+
+- **2026-11-02, download only.** The first data run (2026-11-01) stopped before reading any
+  docs: `codeload.github.com/.../refs/heads/3.9` returned 404. CPython replaces an
+  end-of-life branch with a tag of the same name (3.9 and 3.10 are tags now). `job.py` now
+  tries the branch and then the tag, and records which URL it used. Nothing else changed:
+  same branches, rules, bars and predictions. No results had been seen.
+
 ## Files
 
 - `ledger.py`: scanner, claim builder and grading (pure functions).
