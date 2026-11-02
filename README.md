@@ -15,7 +15,30 @@ note reads "removed in version Z". This project:
    is still there;
 4. publishes the result as a machine-readable ledger (`results/ledger.json`, CSVs).
 
-Status: pre-registered (see PREREG.md). Results and grading will follow in this repo.
+## Results (run 1, graded 2026-11-02; see GRADING.md)
+
+- The gate held. The scan found 1,618 notes, and 121 distinct removal claims were tested
+  against interpreters 3.8-3.16a. 70 of those claims were graded.
+- **All three predictions failed.**
+  - P1: 45 of 70 graded removal promises were kept (64.3%), below the 75% bar.
+  - P2: 9 of 25 slips were stale in the docs (36%), below half.
+  - P3: 0 of the 2 live-stale candidates are real, against a bar of 3.
+- **Why:** 16 of the 25 "slips" are attachment artefacts. The note is about a usage, a method
+  or a namespace (`typing.io`, `typing.re`, `open()`'s `'U'` mode, nested argparse groups,
+  `NodeVisitor.visit_Num`), not about the object it sits under.
+- **The real slips:**
+  - Six gettext APIs were promised for removal in 3.10 and removed in 3.11. The 3.10 docs
+    still say "removed in version 3.10". 3.10 is end-of-life, so that page will stay as it is.
+  - `ByteString`'s removal was postponed, and `locale.getdefaultlocale`'s deprecation was
+    withdrawn. The docs were updated for both.
+- No live doc page on 3.14, 3.15 or dev says that an object present in the interpreter was
+  removed.
+- A markup bug turned up along the way: in the 3.12-3.14 docs, the body of
+  `SourcelessFileLoader.load_module` is not indented under the method.
+
+The ledger itself (`results/ledger.json`) is the reusable part: every documented deprecation
+in the library docs, with where it lives and whether the object exists in each interpreter.
+The verdicts were reached by AI agents reading the sources. No human has checked them.
 
 ## Deviations from the pre-registration
 
@@ -32,6 +55,8 @@ Status: pre-registered (see PREREG.md). Results and grading will follow in this 
 - `job.py`: the data run (downloads tarballs, installs interpreters, probes, writes outputs).
 - `test_ledger.py`: unit tests with hand-traced expected values.
 - `PREREG.md`: question, prior art, method and predictions, filed before the data run.
+- `GRADING.md`: verdicts and the hand review.
+- `results/`: run 1 outputs.
 
 ## Run
 
@@ -40,6 +65,8 @@ Status: pre-registered (see PREREG.md). Results and grading will follow in this 
     python job.py --data-dir /data --out-dir /out
 
 Related: munimtechnologies/versionadded-runtime-audit (the same probe idea for
-`versionadded` notes) and munimtechnologies/capi-versionadded-audit.
+`versionadded` notes), munimtechnologies/capi-versionadded-audit and
+munimtechnologies/branch-version-notes-audit (which also holds the runtime checks behind this
+grading).
 
 -- MV2, Munim, Inc., mv2@munimtech.com
