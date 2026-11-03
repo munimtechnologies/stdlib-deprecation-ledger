@@ -1,0 +1,416 @@
+{
+ "all_expected_held": true,
+ "checks": [
+  {
+   "about": "3.13 docs (Legacy Locking APIs) say 'Changed in version 3.15: ... now always uses PyMutex'. Which lock does each interpreter report?",
+   "expect": {
+    "3.13": "ne:pymutex",
+    "3.14": "ne:pymutex",
+    "3.15": "eq:pymutex"
+   },
+   "id": "thread_lock",
+   "minors": [
+    "3.13",
+    "3.14",
+    "3.15",
+    "3.16"
+   ]
+  },
+  {
+   "about": "3.14 docs say datetime.utcfromtimestamp 'Changed in version 3.15: Accepts any real number as timestamp' (gh-67795). Does 3.14 accept a Fraction?",
+   "expect": {
+    "3.13": "prefix:error",
+    "3.14": "prefix:error",
+    "3.15": "prefix:ok"
+   },
+   "id": "utcfromtimestamp_fraction",
+   "minors": [
+    "3.13",
+    "3.14",
+    "3.15",
+    "3.16"
+   ]
+  },
+  {
+   "about": "Same change family: datetime.fromtimestamp(Fraction, tz=UTC).",
+   "expect": {
+    "3.14": "prefix:error",
+    "3.15": "prefix:ok"
+   },
+   "id": "fromtimestamp_fraction",
+   "minors": [
+    "3.13",
+    "3.14",
+    "3.15",
+    "3.16"
+   ]
+  },
+  {
+   "about": "3.10 docs say lngettext, ldngettext, bind_textdomain_codeset and NullTranslations.output_charset were 'removed in version 3.10'.",
+   "expect": {
+    "3.10": "eq:True True True True",
+    "3.11": "eq:False False False False"
+   },
+   "id": "gettext_l_functions",
+   "minors": [
+    "3.10",
+    "3.11"
+   ]
+  },
+  {
+   "about": "3.10 docs say open()'s 'U' mode was 'removed in version 3.10'.",
+   "expect": {
+    "3.10": "eq:ok",
+    "3.11": "eq:error ValueError"
+   },
+   "id": "open_U_mode",
+   "minors": [
+    "3.10",
+    "3.11"
+   ]
+  },
+  {
+   "about": "3.9 docs said the typing.io / typing.re namespaces would be removed in 3.12; 3.10+ docs say 3.13.",
+   "expect": {
+    "3.12": "eq:ok",
+    "3.13": "prefix:error"
+   },
+   "id": "typing_io_re_namespaces",
+   "minors": [
+    "3.12",
+    "3.13"
+   ]
+  },
+  {
+   "about": "Live note (3.14+): nesting groups inside a mutually exclusive group is 'removed in version 3.14'.",
+   "expect": {
+    "3.13": "eq:ok",
+    "3.14": "prefix:error"
+   },
+   "id": "argparse_nested_group",
+   "minors": [
+    "3.13",
+    "3.14"
+   ]
+  },
+  {
+   "about": "Live note (3.14+): NodeVisitor.visit_Num and friends 'will not be called in Python 3.14+' (removed in version 3.14).",
+   "expect": {
+    "3.13": "eq:True",
+    "3.14": "eq:False"
+   },
+   "id": "nodevisitor_visit_num",
+   "minors": [
+    "3.13",
+    "3.14"
+   ]
+  },
+  {
+   "about": "Exploratory: do SourcelessFileLoader / SourceFileLoader still have load_module ('will be removed in version 3.15' in the 3.12-3.14 docs)?",
+   "expect": {},
+   "id": "sourceless_load_module",
+   "minors": [
+    "3.14",
+    "3.15",
+    "3.16"
+   ]
+  }
+ ],
+ "counts": {
+  "exploratory": 7,
+  "match": 18,
+  "mismatch": 0,
+  "no_result": 0
+ },
+ "finished_at": "2026-11-02T07:30:11Z",
+ "interpreters": {
+  "3.10": {
+   "error": "",
+   "installed": true,
+   "version": "3.10.22 linux"
+  },
+  "3.11": {
+   "error": "",
+   "installed": true,
+   "version": "3.11.18 linux"
+  },
+  "3.12": {
+   "error": "",
+   "installed": true,
+   "version": "3.12.16 linux"
+  },
+  "3.13": {
+   "error": "",
+   "installed": true,
+   "version": "3.13.18 linux"
+  },
+  "3.14": {
+   "error": "",
+   "installed": true,
+   "version": "3.14.10 linux"
+  },
+  "3.15": {
+   "error": "",
+   "installed": true,
+   "version": "3.15.2 linux"
+  },
+  "3.16": {
+   "error": "",
+   "installed": true,
+   "version": "3.16.0a1 linux"
+  }
+ },
+ "platform": "linux",
+ "results": [
+  {
+   "check": "thread_lock",
+   "got": "semaphore",
+   "minor": "3.13",
+   "returncode": 0,
+   "rule": "ne:pymutex",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.13.18 linux"
+  },
+  {
+   "check": "thread_lock",
+   "got": "semaphore",
+   "minor": "3.14",
+   "returncode": 0,
+   "rule": "ne:pymutex",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.14.10 linux"
+  },
+  {
+   "check": "thread_lock",
+   "got": "pymutex",
+   "minor": "3.15",
+   "returncode": 0,
+   "rule": "eq:pymutex",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.15.2 linux"
+  },
+  {
+   "check": "thread_lock",
+   "got": "pymutex",
+   "minor": "3.16",
+   "returncode": 0,
+   "rule": null,
+   "stderr_tail": "",
+   "verdict": "exploratory",
+   "version": "3.16.0a1 linux"
+  },
+  {
+   "check": "utcfromtimestamp_fraction",
+   "got": "error TypeError",
+   "minor": "3.13",
+   "returncode": 0,
+   "rule": "prefix:error",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.13.18 linux"
+  },
+  {
+   "check": "utcfromtimestamp_fraction",
+   "got": "error TypeError",
+   "minor": "3.14",
+   "returncode": 0,
+   "rule": "prefix:error",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.14.10 linux"
+  },
+  {
+   "check": "utcfromtimestamp_fraction",
+   "got": "ok 1970-01-01T00:00:00.500000",
+   "minor": "3.15",
+   "returncode": 0,
+   "rule": "prefix:ok",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.15.2 linux"
+  },
+  {
+   "check": "utcfromtimestamp_fraction",
+   "got": "ok 1970-01-01T00:00:00.500000",
+   "minor": "3.16",
+   "returncode": 0,
+   "rule": null,
+   "stderr_tail": "",
+   "verdict": "exploratory",
+   "version": "3.16.0a1 linux"
+  },
+  {
+   "check": "fromtimestamp_fraction",
+   "got": "error TypeError",
+   "minor": "3.13",
+   "returncode": 0,
+   "rule": null,
+   "stderr_tail": "",
+   "verdict": "exploratory",
+   "version": "3.13.18 linux"
+  },
+  {
+   "check": "fromtimestamp_fraction",
+   "got": "error TypeError",
+   "minor": "3.14",
+   "returncode": 0,
+   "rule": "prefix:error",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.14.10 linux"
+  },
+  {
+   "check": "fromtimestamp_fraction",
+   "got": "ok 1970-01-01T00:00:00.500000+00:00",
+   "minor": "3.15",
+   "returncode": 0,
+   "rule": "prefix:ok",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.15.2 linux"
+  },
+  {
+   "check": "fromtimestamp_fraction",
+   "got": "ok 1970-01-01T00:00:00.500000+00:00",
+   "minor": "3.16",
+   "returncode": 0,
+   "rule": null,
+   "stderr_tail": "",
+   "verdict": "exploratory",
+   "version": "3.16.0a1 linux"
+  },
+  {
+   "check": "gettext_l_functions",
+   "got": "True True True True",
+   "minor": "3.10",
+   "returncode": 0,
+   "rule": "eq:True True True True",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.10.22 linux"
+  },
+  {
+   "check": "gettext_l_functions",
+   "got": "False False False False",
+   "minor": "3.11",
+   "returncode": 0,
+   "rule": "eq:False False False False",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.11.18 linux"
+  },
+  {
+   "check": "open_U_mode",
+   "got": "ok",
+   "minor": "3.10",
+   "returncode": 0,
+   "rule": "eq:ok",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.10.22 linux"
+  },
+  {
+   "check": "open_U_mode",
+   "got": "error ValueError",
+   "minor": "3.11",
+   "returncode": 0,
+   "rule": "eq:error ValueError",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.11.18 linux"
+  },
+  {
+   "check": "typing_io_re_namespaces",
+   "got": "ok",
+   "minor": "3.12",
+   "returncode": 0,
+   "rule": "eq:ok",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.12.16 linux"
+  },
+  {
+   "check": "typing_io_re_namespaces",
+   "got": "error ModuleNotFoundError",
+   "minor": "3.13",
+   "returncode": 0,
+   "rule": "prefix:error",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.13.18 linux"
+  },
+  {
+   "check": "argparse_nested_group",
+   "got": "ok",
+   "minor": "3.13",
+   "returncode": 0,
+   "rule": "eq:ok",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.13.18 linux"
+  },
+  {
+   "check": "argparse_nested_group",
+   "got": "error ValueError",
+   "minor": "3.14",
+   "returncode": 0,
+   "rule": "prefix:error",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.14.10 linux"
+  },
+  {
+   "check": "nodevisitor_visit_num",
+   "got": "True",
+   "minor": "3.13",
+   "returncode": 0,
+   "rule": "eq:True",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.13.18 linux"
+  },
+  {
+   "check": "nodevisitor_visit_num",
+   "got": "False",
+   "minor": "3.14",
+   "returncode": 0,
+   "rule": "eq:False",
+   "stderr_tail": "",
+   "verdict": "match",
+   "version": "3.14.10 linux"
+  },
+  {
+   "check": "sourceless_load_module",
+   "got": "True True",
+   "minor": "3.14",
+   "returncode": 0,
+   "rule": null,
+   "stderr_tail": "",
+   "verdict": "exploratory",
+   "version": "3.14.10 linux"
+  },
+  {
+   "check": "sourceless_load_module",
+   "got": "False False",
+   "minor": "3.15",
+   "returncode": 0,
+   "rule": null,
+   "stderr_tail": "",
+   "verdict": "exploratory",
+   "version": "3.15.2 linux"
+  },
+  {
+   "check": "sourceless_load_module",
+   "got": "False False",
+   "minor": "3.16",
+   "returncode": 0,
+   "rule": null,
+   "stderr_tail": "",
+   "verdict": "exploratory",
+   "version": "3.16.0a1 linux"
+  }
+ ]
+}
